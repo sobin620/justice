@@ -67,7 +67,7 @@ body {
 /* 상단 연락처 문구 */
 .contact {
   position: absolute;
-  top: 52px;
+  top: 20px;
   right: 105px;
   width: 100%;
   margin: 0;
@@ -80,7 +80,7 @@ body {
 /* 메인 제목 */
 h1 {
   position: absolute;
-  top: 52px;
+  top: 40px;
   left: 16px;
   margin: 0;
   /* font-family: "Nanum Myeongjo", "Batang", serif; */
@@ -93,7 +93,7 @@ h1 {
 /* 원형 바로가기 버튼만 가로 스크롤되는 영역 */
 .navigation-wrapper {
   position: absolute;
-  top: 152px;
+  top: 132px;
   left: 0;
   width: 100%;
   overflow-x: auto; /* 이 영역에서만 가로 스크롤 허용 */
