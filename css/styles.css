@@ -1,7 +1,7 @@
 /* 전체 디자인에서 재사용하는 값 */
 :root {
   --page-width: 390px;   /* 모바일 화면 기준 너비 */
-  --header-height: 200px; /* 고정 헤더 전체 높이 */
+  --header-height: 178px; /* 고정 헤더 전체 높이 */
   --ink: #000;           /* 기본 글자색 */
   --accent: #9f0d06;     /* 선택 버튼·화 번호에 쓰는 빨간색 */
   --paper: #fefefe;      /* 페이지 배경색 */
@@ -68,7 +68,7 @@ body {
 .contact {
   position: absolute;
   top: 20px;
-  right: 105px;
+  left: 16px;
   width: 100%;
   margin: 0;
   text-align: center;
@@ -93,7 +93,7 @@ h1 {
 /* 원형 바로가기 버튼만 가로 스크롤되는 영역 */
 .navigation-wrapper {
   position: absolute;
-  top: 132px;
+  top: 100px;
   left: 0;
   width: 100%;
   overflow-x: auto; /* 이 영역에서만 가로 스크롤 허용 */
@@ -246,7 +246,7 @@ h1 {
 /* staff 카드 문단 기본 여백 제거 */
 .staff-layout p { margin: 0; }
 
-/* 391px 이상: PC에서 모바일 화면에 그림자 적용 */
+
 @media (min-width: 768px) {
   body {
     background: #292522; /* PC 양옆 배경만 어둡게 */
@@ -254,7 +254,7 @@ h1 {
 
   .mobile-page {
     box-shadow: 0 0 28px rgba(0,0,0,.2);
-  }
+  };
 }
 
 /* 360px보다 좁은 화면: 카드가 화면 너비에 맞게 줄어듦 */
