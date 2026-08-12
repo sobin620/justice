@@ -200,18 +200,29 @@ navigation.addEventListener(
 
 const pageHeader = document.querySelector("#page-header");
 let lastScrollY = window.scrollY;
+const THRESHOLD = 10; // 최소 10px은 움직여야 작동
 
 window.addEventListener("scroll", () => {
   const currentScrollY = window.scrollY;
+  const scrollDifference = Math.abs(currentScrollY - lastScrollY);
 
-  /* 아래로 내릴 때 → 헤더 보이기 */
-  if (currentScrollY <= 0 || currentScrollY < lastScrollY) {
+  // 맨 위로 왔을 땐 무조건 보이기
+  if (currentScrollY <= 0) {
     pageHeader.classList.remove("is-hidden");
+    lastScrollY = currentScrollY;
+    return;
   }
 
-  /* 위로 올릴 때 → 헤더 숨기기 */
-  else if (currentScrollY > lastScrollY) {
+  // 설정한 임계값(10px)보다 미세한 스크롤은 무시
+  if (scrollDifference < THRESHOLD) return;
+
+  // 아래로 내릴 때 → 숨김
+  if (currentScrollY > lastScrollY) {
     pageHeader.classList.add("is-hidden");
+  } 
+  // 위로 올릴 때 → 보임
+  else {
+    pageHeader.classList.remove("is-hidden");
   }
 
   lastScrollY = currentScrollY;
