@@ -1,7 +1,7 @@
 /* 전체 디자인에서 재사용하는 값 */
 :root {
   --page-width: 390px;   /* 모바일 화면 기준 너비 */
-  --header-height: 272px; /* 고정 헤더 전체 높이 */
+  --header-height: 200px; /* 고정 헤더 전체 높이 */
   --ink: #000;           /* 기본 글자색 */
   --accent: #9f0d06;     /* 선택 버튼·화 번호에 쓰는 빨간색 */
   --paper: #fefefe;      /* 페이지 배경색 */
@@ -67,7 +67,7 @@ body {
 /* 상단 연락처 문구 */
 .contact {
   position: absolute;
-  top: 61px;
+  top: 52px;
   right: 105px;
   width: 100%;
   margin: 0;
@@ -80,7 +80,7 @@ body {
 /* 메인 제목 */
 h1 {
   position: absolute;
-  top: 96px;
+  top: 52px;
   left: 16px;
   margin: 0;
   /* font-family: "Nanum Myeongjo", "Batang", serif; */
@@ -93,7 +93,7 @@ h1 {
 /* 원형 바로가기 버튼만 가로 스크롤되는 영역 */
 .navigation-wrapper {
   position: absolute;
-  top: 203px;
+  top: 152px;
   left: 0;
   width: 100%;
   overflow-x: auto; /* 이 영역에서만 가로 스크롤 허용 */
@@ -247,7 +247,7 @@ h1 {
 .staff-layout p { margin: 0; }
 
 /* 391px 이상: PC에서 모바일 화면에 그림자 적용 */
-@media (min-width: 391px) {
+@media (min-width: 768px) {
   body {
     background: #292522; /* PC 양옆 배경만 어둡게 */
   }
