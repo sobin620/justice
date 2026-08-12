@@ -16,9 +16,13 @@
 }
 
 /* 앵커/스크롤 이동 시 부드럽게 이동 */
-html { scroll-behavior: smooth; }
+html {
+  min-height: 100%;
+  min-height: -webkit-fill-available; /* iOS Safari 대응 */
+  background: var(--paper);
+  scroll-behavior: smooth;
+}
 
-/* 전체 페이지 가로 스크롤 방지 */
 html, body {
   width: 100%;
   max-width: 100%;
@@ -27,18 +31,20 @@ html, body {
   overflow-x: hidden;
 }
 
-/* PC 양옆에 보이는 어두운 배경과 기본 폰트 */
 body {
-  background: #292522;
+  min-height: 100vh;  /* 구형 브라우저용 */
+  min-height: 100dvh; /* 모바일 Safari 동적 높이 대응 */
+  background: var(--paper);
   color: var(--ink);
   font-family: Inter, "Pretendard Variable", Arial, sans-serif;
 }
 
-/* 실제 콘텐츠가 표시되는 390px 모바일 화면 */
 .mobile-page {
   width: min(var(--page-width), 100%);
   min-height: 100vh;
-  margin: 0 auto; /* PC에서 중앙 정렬 */
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   background: var(--paper);
   position: relative;
 }
@@ -133,7 +139,7 @@ h1 {
 .timeline-content {
   position: relative;
   padding-top: var(--header-height);
-  padding-bottom: 40px;
+  padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
 }
 
 /* 에피소드 한 개의 타임라인 행 */
@@ -242,8 +248,12 @@ h1 {
 
 /* 391px 이상: PC에서 모바일 화면에 그림자 적용 */
 @media (min-width: 391px) {
+  body {
+    background: #292522; /* PC 양옆 배경만 어둡게 */
+  }
+
   .mobile-page {
-    box-shadow: 0 0 28px rgba(0, 0, 0, .2);
+    box-shadow: 0 0 28px rgba(0,0,0,.2);
   }
 }
 
