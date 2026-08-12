@@ -205,12 +205,12 @@ window.addEventListener("scroll", () => {
   const currentScrollY = window.scrollY;
 
   /* 아래로 내릴 때 → 헤더 보이기 */
-  if (currentScrollY <= 0 || currentScrollY > lastScrollY) {
+  if (currentScrollY <= 0 || currentScrollY < lastScrollY) {
     pageHeader.classList.remove("is-hidden");
   }
 
   /* 위로 올릴 때 → 헤더 숨기기 */
-  else if (currentScrollY < lastScrollY) {
+  else if (currentScrollY > lastScrollY) {
     pageHeader.classList.add("is-hidden");
   }
 

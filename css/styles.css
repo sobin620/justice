@@ -60,8 +60,7 @@ body {
   transform: translateX(-50%); /* 정확한 가로 중앙 정렬 */
   background: var(--paper);
   border-bottom: 1px solid #cdcdcd;
-  transition: transform .24s ease;
-
+  transition: transform .31s ease;
 }
 
 .fixed-header.is-hidden {
