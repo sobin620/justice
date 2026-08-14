@@ -95,28 +95,12 @@ function scrollToEpisode(target) {
 //   navigationTimer = window.setTimeout(() => {
 //     isNavigating = false;
 
-
-//     lastScrollY = window.scrollY;
-
-//     pageHeader.classList.remove("is-hidden");
-//   }, 1200);
-// }
-
-/* 스크롤 이동이 완료되는 순간 바로 딜레이 없이 제어권 해제 */
-  const onScrollEnd = () => {
-    isNavigating = false;
-    lastScrollY = window.scrollY;
-    window.removeEventListener("scrollend", onScrollEnd);
-  };
-
-  window.addEventListener("scrollend", onScrollEnd);
-
-  /* 혹시 모를 구형 브라우저 대응용 타임아웃 (300ms로 대폭 축소) */
-  window.clearTimeout(navigationTimer);
-  navigationTimer = window.setTimeout(() => {
-    isNavigating = false;
-    lastScrollY = window.scrollY;
-  }, 300);
+/* 
+    이동 완료 후 헤더를 보여준 상태로 대기하며
+    유저가 직접 스크롤하기를 기다림
+  */
+  lastScrollY = window.scrollY;
+  pageHeader.classList.remove("is-hidden");
 }
 
 /* navigationTargets를 이용해 01~06 원형 버튼 생성 */
@@ -267,11 +251,21 @@ window.addEventListener(
       smooth 스크롤 때문에 scroll 이벤트가 여러 번 발생해도
       헤더가 계속 보이는 상태로 유지됨.
     */
+  
+      /* 번호 이동 후 사용자가 직접 스크롤을 내리기 시작하면 제어 해제 */
     if (isNavigating) {
-      pageHeader.classList.remove("is-hidden");
+      if (currentScrollY > lastScrollY) {
+        // 아래로 스크롤하면 이동 모드 즉시 해제 & 헤더 숨김
+        isNavigating = false;
+        pageHeader.classList.add("is-hidden");
+      } else if (currentScrollY < lastScrollY) {
+        // 위로 스크롤하면 이동 모드만 해제
+        isNavigating = false;
+      }
       lastScrollY = currentScrollY;
       return;
     }
+
 
     const scrollDifference = Math.abs(
       currentScrollY - lastScrollY
