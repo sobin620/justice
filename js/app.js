@@ -91,22 +91,32 @@ function scrollToEpisode(target) {
     });
   }
 
-  /*
-    부드러운 이동이 끝날 때까지
-    헤더가 다시 숨겨지지 않도록 충분히 기다림
-  */
+
+//   navigationTimer = window.setTimeout(() => {
+//     isNavigating = false;
+
+
+//     lastScrollY = window.scrollY;
+
+//     pageHeader.classList.remove("is-hidden");
+//   }, 1200);
+// }
+
+/* 스크롤 이동이 완료되는 순간 바로 딜레이 없이 제어권 해제 */
+  const onScrollEnd = () => {
+    isNavigating = false;
+    lastScrollY = window.scrollY;
+    window.removeEventListener("scrollend", onScrollEnd);
+  };
+
+  window.addEventListener("scrollend", onScrollEnd);
+
+  /* 혹시 모를 구형 브라우저 대응용 타임아웃 (300ms로 대폭 축소) */
+  window.clearTimeout(navigationTimer);
   navigationTimer = window.setTimeout(() => {
     isNavigating = false;
-
-    /*
-      이동이 끝난 현재 위치를 기준으로
-      다음 스크롤 방향을 판단
-    */
     lastScrollY = window.scrollY;
-
-    /* 이동이 끝난 후에도 헤더는 보여진 상태 유지 */
-    pageHeader.classList.remove("is-hidden");
-  }, 1200);
+  }, 300);
 }
 
 /* navigationTargets를 이용해 01~06 원형 버튼 생성 */
