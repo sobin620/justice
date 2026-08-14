@@ -276,6 +276,7 @@ window.addEventListener(
 
     /* 10px보다 작은 움직임은 무시 */
     if (scrollDifference < THRESHOLD) {
+      lastScrollY = currentScrollY; // ★ 이 줄을 추가해 주면 해결됩니다!
       return;
     }
 
