@@ -34,10 +34,19 @@ const episodes = Array.from({ length: 386 }, (_, index) => {
 const navigation = document.querySelector("#navigation");
 const episodeContainer = document.querySelector("#episodes");
 
-/* 현재 선택된 버튼, 스크롤 이동 중인지 저장 */
+/* 현재 선택된 버튼 및 유저 입력 상태 저장 */
 let activeTarget = 1;
 let isNavigating = false;
-let navigationTimer;
+let isUserInteraction = false;
+
+/* 유저가 직접 휠/터치/키보드로 스크롤했는지 감지 */
+window.addEventListener("wheel", () => { isUserInteraction = true; }, { passive: true });
+window.addEventListener("touchmove", () => { isUserInteraction = true; }, { passive: true });
+window.addEventListener("keydown", (e) => {
+  if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Space"].includes(e.code)) {
+    isUserInteraction = true;
+  }
+}, { passive: true });
 
 /* 헤더 */
 const pageHeader = document.querySelector("#page-header");
@@ -55,33 +64,21 @@ function setActive(target) {
 
   document.querySelectorAll(".nav-button").forEach((button) => {
     const isCurrent = Number(button.dataset.target) === target;
-
     button.setAttribute("aria-current", String(isCurrent));
   });
 }
 
 /* 특정 화 위치로 부드럽게 스크롤 */
 function scrollToEpisode(target) {
-  /* 선택한 번호 활성화 */
+  /* 1. 눌른 버튼 번호 즉시 활성화 */
   setActive(target);
 
-  /*
-    번호 버튼을 클릭하면
-    이동 방향과 관계없이 헤더를 먼저 보여줌
-  */
+  /* 2. 헤더 노출 및 버튼 이동 플래그 설정 */
   pageHeader.classList.remove("is-hidden");
-
-  /*
-    중요:
-    번호 버튼으로 이동하는 동안에는
-    일반 스크롤에 의한 헤더 숨김/표시를 막음
-  */
   isNavigating = true;
+  isUserInteraction = false;
 
-  /* 기존 타이머 제거 */
-  window.clearTimeout(navigationTimer);
-
-  /* 해당 화로 이동 */
+  /* 3. 해당 위치로 스크롤 이동 */
   const targetElement = document.querySelector(`#episode-${target}`);
 
   if (targetElement) {
@@ -91,16 +88,7 @@ function scrollToEpisode(target) {
     });
   }
 
-
-//   navigationTimer = window.setTimeout(() => {
-//     isNavigating = false;
-
-/* 
-    이동 완료 후 헤더를 보여준 상태로 대기하며
-    유저가 직접 스크롤하기를 기다림
-  */
   lastScrollY = window.scrollY;
-  pageHeader.classList.remove("is-hidden");
 }
 
 /* navigationTargets를 이용해 01~06 원형 버튼 생성 */
@@ -111,13 +99,11 @@ navigationTargets.forEach((target, index) => {
   button.type = "button";
   button.dataset.target = target;
 
-  /* index 0 → 01, index 1 → 02 */
   button.textContent = String(index + 1).padStart(2, "0");
 
   button.setAttribute("aria-label", `${target}화로 이동`);
   button.setAttribute("aria-current", String(target === 1));
 
-  /* 버튼 클릭 시 지정된 화로 이동 */
   button.addEventListener("click", () => {
     scrollToEpisode(target);
   });
@@ -127,7 +113,6 @@ navigationTargets.forEach((target, index) => {
 
 /* 에피소드 데이터에 따라 카드 HTML 모양을 결정 */
 function cardMarkup(item) {
-  /* 검찰 배치도 전용 카드 */
   if (item.type === "prosecutor") {
     return `<article class="episode-card large">
       <h2 class="episode-title">${item.title}</h2>
@@ -142,7 +127,6 @@ function cardMarkup(item) {
     </article>`;
   }
 
-  /* 검사·수사관·실무관 전용 카드 */
   if (item.type === "staff") {
     return `<article class="episode-card large">
       <h2 class="episode-title">${item.title}</h2>
@@ -155,7 +139,6 @@ function cardMarkup(item) {
     </article>`;
   }
 
-  /* 기본 카드: 제목 + 설명 */
   return `<article class="episode-card">
     <h2 class="episode-title">${item.title}</h2>
     <p class="episode-description">${item.description}</p>
@@ -187,7 +170,6 @@ const observed = navigationTargets.map((target) =>
 /* 사용자가 직접 스크롤할 때 현재 위치의 버튼 색상을 자동 변경 */
 const observer = new IntersectionObserver(
   (entries) => {
-    /* 번호 버튼 클릭 이동 중이면 자동 변경하지 않음 */
     if (isNavigating) return;
 
     const current = entries
@@ -208,21 +190,17 @@ const observer = new IntersectionObserver(
   }
 );
 
-/* 각 대상 화를 스크롤 감지 시작 */
 observed.forEach((element) => observer.observe(element));
 
-/* 새로고침하면 항상 맨 위 + 01 버튼 선택 상태 */
+/* 새로고침시 상단 초기화 */
 window.addEventListener("load", () => {
   window.scrollTo(0, 0);
-
   pageHeader.classList.remove("is-hidden");
-
   lastScrollY = 0;
-
   setActive(1);
 });
 
-/* PC에서 버튼 영역 위 휠을 굴리면 버튼을 가로 스크롤 */
+/* PC 가로 스크롤 */
 navigation.addEventListener(
   "wheel",
   (event) => {
@@ -234,53 +212,39 @@ navigation.addEventListener(
   { passive: false }
 );
 
-/*
-  헤더 숨김 / 표시
-*/
+/* 헤더 숨김 / 표시 스크롤 제어 */
 window.addEventListener(
   "scroll",
   () => {
     const currentScrollY = window.scrollY;
 
-    /*
-      ★ 핵심 ★
-
-      번호 버튼을 눌러서 이동하는 중이면
-      여기서 헤더를 숨기지 않음.
-
-      smooth 스크롤 때문에 scroll 이벤트가 여러 번 발생해도
-      헤더가 계속 보이는 상태로 유지됨.
-    */
-  
-      /* 번호 이동 후 사용자가 직접 스크롤을 내리기 시작하면 제어 해제 */
+    /* 번호 이동 중 처리 */
     if (isNavigating) {
-      if (currentScrollY > lastScrollY) {
-        // 아래로 스크롤하면 이동 모드 즉시 해제 & 헤더 숨김
+      pageHeader.classList.remove("is-hidden");
+
+      /* 유저가 손으로 스크롤을 조작했을 때만 내비게이션 모드 해제 */
+      if (isUserInteraction) {
         isNavigating = false;
-        pageHeader.classList.add("is-hidden");
-      } else if (currentScrollY < lastScrollY) {
-        // 위로 스크롤하면 이동 모드만 해제
-        isNavigating = false;
+        if (currentScrollY > lastScrollY) {
+          pageHeader.classList.add("is-hidden");
+        }
       }
       lastScrollY = currentScrollY;
       return;
     }
 
+    const scrollDifference = Math.abs(currentScrollY - lastScrollY);
 
-    const scrollDifference = Math.abs(
-      currentScrollY - lastScrollY
-    );
-
-    /* 맨 위로 왔을 땐 무조건 보이기 */
+    /* 맨 위로 왔을 때 */
     if (currentScrollY <= 0) {
       pageHeader.classList.remove("is-hidden");
       lastScrollY = currentScrollY;
       return;
     }
 
-    /* 10px보다 작은 움직임은 무시 */
+    /* 10px 미만 움직임 감지 시 기준점만 업데이트 */
     if (scrollDifference < THRESHOLD) {
-      lastScrollY = currentScrollY; // ★ 이 줄을 추가해 주면 해결됩니다!
+      lastScrollY = currentScrollY;
       return;
     }
 
@@ -288,7 +252,6 @@ window.addEventListener(
     if (currentScrollY > lastScrollY) {
       pageHeader.classList.add("is-hidden");
     }
-
     /* 위로 올릴 때 → 헤더 보임 */
     else {
       pageHeader.classList.remove("is-hidden");
