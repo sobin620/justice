@@ -254,7 +254,7 @@ h1 {
 
 @media (min-width: 768px) {
   body {
-    background: #292522; /* PC 양옆 배경만 어둡게 */
+    background: #fefefe; /* PC 양옆 배경만 어둡게 */
   }
 
   .mobile-page {
